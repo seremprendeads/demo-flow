@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowGen | Outbound que Garantiza Resultados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#f59e0b',
+                        dark: '#0f172a',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+     .hamburger-line {
+      width: 24px;
+      height: 3px;
+      background-color: #ffffff;
+      margin: 4px 0;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active .line1 {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.active .line2 {
+      opacity: 0;
+    }
+
+    .hamburger.active .line3 {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .menu-slide {
+      transition: transform 0.3s ease;
+      transform: translateX(-100%);
+    }
+
+    .menu-open {
+      transform: translateX(0);
+    }
+
+    .sidebar-enter {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-show {
+      transform: translateX(0);
+      transition: transform 0.3s ease;
+    }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
+            to { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-x-hidden">
+ 
+ 
+    <!-- NAVBAR -->
+  <nav class="fixed top-0 w-full z-50 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <img src="img/svgexport.svg" alt="logo">
+       
+      </div>
+
+      <!-- Botón hamburguesa -->
+      <div class="md:hidden">
+        <button id="menu-btn" class="hamburger flex flex-col justify-center items-center w-10 h-10 z-50">
+          <div class="hamburger-line line1"></div>
+          <div class="hamburger-line line2"></div>
+          <div class="hamburger-line line3"></div>
+        </button>
+      </div>
+
+      <!-- Navegación escritorio -->
+      <nav class="hidden md:flex space-x-6 items-center">
+        <a href="#inicio" class="text-gray-200 hover:text-white">Inicio</a>
+        <a href="#nosotros" class="text-gray-200 hover:text-white">Servicios</a>
+        <a href="#servicios" class="text-gray-200 hover:text-white">Casos de Éxito</a>
+        <a href="#galeria" class="text-gray-200 hover:text-white">Herramientas</a>
+        <a href="#staff" class="text-gray-200 hover:text-white">Trabaja con Nosotros</a>
+        <a href="#contacto" class="bg-green-200 text-white font-bold px-6 py-2 rounded-full hover:bg-green-700 flex items-center animate-pulse">
+          CONTACTO
+          <img src="https://cdn.simpleicons.org/Whatsapp/ffffff" alt="WhatsApp" class="ml-2 h-6 w-6"/>
+        </a>
+      </nav>
+    </div>
+  </nav>
+
+  <!-- MENU LATERAL -->
+  <div id="mobile-menu" class="fixed top-16 left-0 w-64 h-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 shadow-lg z-40 menu-slide flex flex-col py-10 px-6 space-y-6 text-left">
+      <a href="#inicio" class="text-gray-200 hover:text-white">Inicio</a>
+        <a href="#nosotros" class="text-gray-200 hover:text-white">Servicios</a>
+        <a href="#servicios" class="text-gray-200 hover:text-white">Casos de Éxito</a>
+        <a href="#galeria" class="text-gray-200 hover:text-white">Herramientas</a>
+        <a href="#staff" class="text-gray-200 hover:text-white">Trabaja con Nosotros</a>
+    <a href="#contacto" class="mobile-link bg-green-600 text-white font-bold px-4 py-2 rounded-full hover:bg-green-700 flex items-center justify-center animate-pulse">
+     CONTACTO
+      <img src="https://cdn.simpleicons.org/Whatsapp/ffffff" alt="WhatsApp" class="ml-2 h-6 w-6" />
+    </a>
+  </div>
+
+  <!-- OVERLAY -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-30"></div>
+
+
+
+<!-- Hero Section -->
+<section class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+  <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 animate-pulse"></div>
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="text-center max-w-5xl mx-auto">
+      <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight">
+        <span class="gradient-text">
+          Outbound que
+        </span><br>
+        <span class="text-white">garantiza resultados</span>
+      </h1>
+
+      <p class="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">
+        Hemos generado más de <span class="text-accent font-bold">3 millones de euros</span> para nuestros partners, eliminando la necesidad de depender de SDRs y agencias amateur
+      </p>
+
+      <!-- Video embed Wistia sin bordes -->
+      <div class="mx-auto max-w-[720px] w-full rounded-xl duration-300 overflow-hidden mb-8">
+        <div class="relative w-full pt-[56.25%]">
+          <iframe 
+            src="https://fast.wistia.net/embed/iframe/82xvu9t5ea?autoplay=1&controlsVisibleOnLoad=false&plugin%5Bcontrols%5D%5Bvisible%5D=false" 
+            allowfullscreen 
+            frameborder="0"
+            scrolling="no"
+            allow="autoplay; fullscreen"
+            class="absolute top-0 left-0 w-full h-full"
+          ></iframe>
+        </div>
+      </div>
+
+      <div class="pb-8">
+        <button class="bg-gradient-to-r from-primary to-secondary px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform animate-glow">
+          Conseguir más clientes ahora
+        </button>
+      </div>
+
+      <!-- Logos -->
+      <div class="flex justify-center items-center space-x-8 mb-12 opacity-60">
+        <div class="w-24 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+          <span class="text-sm font-bold">CLIENTE 1</span>
+        </div>
+        <div class="w-24 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+          <span class="text-sm font-bold">CLIENTE 2</span>
+        </div>
+        <div class="w-24 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+          <span class="text-sm font-bold">CLIENTE 3</span>
+        </div>
+      </div>
+
+      <!-- Estadísticas -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent mb-2" data-count="3100">0</div>
+          <div class="text-gray-400">Reuniones Agendadas</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent mb-2">3.2M€</div>
+          <div class="text-gray-400">New Revenue</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent mb-2">150+</div>
+          <div class="text-gray-400">Clientes Activos</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-yellow-400 bg-clip-text text-transparent mb-2">98%</div>
+          <div class="text-gray-400">Tasa de Éxito</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elementos decorativos flotantes -->
+  <div class="absolute top-20 right-10 w-20 h-20 bg-primary/20 rounded-full animate-float"></div>
+  <div class="absolute bottom-20 left-10 w-16 h-16 bg-secondary/20 rounded-full animate-float" style="animation-delay: -2s;"></div>
+</section>
+
+
+
+
+    <!-- Value Proposition -->
+    <section class="py-20 relative">
+        <div class="container mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="section-hidden">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        Conseguimos los <span class="gradient-text">clientes que necesitas</span>
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-8">
+                        Definimos junto a ti el perfil de cliente ideal (ICP) y diseñamos campañas omnicanal personalizadas que convierten. Para que tu equipo se encargue de solo una cosa: cerrar más ventas.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span class="text-lg">Sin perder horas prospectando</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span class="text-lg">Utilizando la tecnología más avanzada</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-accent text-xl"></i>
+                            <span class="text-lg">Campañas omnicanal personalizadas</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="section-hidden">
+                    <div class="relative glass-effect rounded-2xl p-8 animate-float">
+                        <div class="absolute -top-4 -right-4 w-8 h-8 bg-accent rounded-full animate-pulse"></div>
+                        <i class="fas fa-users text-6xl text-primary mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-4">Pipeline Automatizado</h3>
+                       <img src="img/Clientes.webp" alt="clintes" class="rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section id="casos" class="py-20 bg-black/20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 section-hidden">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Nuestros <span class="gradient-text">Casos de Éxito</span>
+                </h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-effect rounded-2xl p-8 hover:scale-105 transition-transform section-hidden">
+                    <div class="mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-chart-line text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Madison Marketing</h3>
+                        <p class="text-accent font-semibold">Agencia Digital</p>
+                    </div>
+                    <p class="text-gray-300 mb-6">"Nuestra Facturación Ha Aumentado un 40%"</p>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold gradient-text">7-35</div>
+                            <div class="text-sm text-gray-400">Reuniones/mes</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold gradient-text">X2</div>
+                            <div class="text-sm text-gray-400">Crecimiento</div>
+                        </div>
+                    </div>
+                    <button class="w-full bg-primary/20 border border-primary rounded-lg py-2 hover:bg-primary/30 transition-colors">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover:scale-105 transition-transform section-hidden">
+                    <div class="mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-rocket text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">TechFlow Solutions</h3>
+                        <p class="text-accent font-semibold">Software B2B</p>
+                    </div>
+                    <p class="text-gray-300 mb-6">"Pipeline lleno en 3 meses, 250% ROI"</p>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold gradient-text">42</div>
+                            <div class="text-sm text-gray-400">Reuniones/mes</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold gradient-text">250%</div>
+                            <div class="text-sm text-gray-400">ROI</div>
+                        </div>
+                    </div>
+                    <button class="w-full bg-primary/20 border border-primary rounded-lg py-2 hover:bg-primary/30 transition-colors">
+                        Leer más
+                    </button>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 hover:scale-105 transition-transform section-hidden">
+                    <div class="mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-trophy text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">GrowthCorp</h3>
+                        <p class="text-accent font-semibold">Consultoría</p>
+                    </div>
+                    <p class="text-gray-300 mb-6">"De 0 a 1M€ en facturación anual"</p>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold gradient-text">28</div>
+                            <div class="text-sm text-gray-400">Reuniones/mes</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold gradient-text">1M€</div>
+                            <div class="text-sm text-gray-400">Facturación</div>
+                        </div>
+                    </div>
+                    <button class="w-full bg-primary/20 border border-primary rounded-lg py-2 hover:bg-primary/30 transition-colors">
+                        Leer más
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="servicios" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 section-hidden">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Tu socio para un <span class="gradient-text">crecimiento imparable</span>
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="glass-effect rounded-2xl p-8 text-center hover:scale-105 transition-all section-hidden group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6 group-hover:animate-bounce">
+                        <i class="fas fa-envelope text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Cold Email Outreach</h3>
+                    <p class="text-gray-300 mb-6">Creación de mensajes hiper-relevantes</p>
+                    <button class="w-full bg-primary text-white rounded-lg py-2 hover:bg-primary/80 transition-colors">
+                        Más info
+                    </button>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 text-center hover:scale-105 transition-all section-hidden group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center mx-auto mb-6 group-hover:animate-bounce">
+                        <i class="fab fa-linkedin text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">LinkedIn Outreach</h3>
+                    <p class="text-gray-300 mb-6">Captación por LinkedIn automatizada</p>
+                    <button class="w-full bg-secondary text-white rounded-lg py-2 hover:bg-secondary/80 transition-colors">
+                        Más info
+                    </button>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 text-center hover:scale-105 transition-all section-hidden group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center mx-auto mb-6 group-hover:animate-bounce">
+                        <i class="fas fa-chart-line text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Growth Hacking</h3>
+                    <p class="text-gray-300 mb-6">Estrategias avanzadas de Go-To-Market</p>
+                    <button class="w-full bg-accent text-white rounded-lg py-2 hover:bg-accent/80 transition-colors">
+                        Más info
+                    </button>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8 text-center hover:scale-105 transition-all section-hidden group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-6 group-hover:animate-bounce">
+                        <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">FlowGen Academy</h3>
+                    <p class="text-gray-300 mb-6">Formación en Ventas Tech</p>
+                    <button class="w-full bg-gradient-to-r from-primary to-accent text-white rounded-lg py-2 hover:scale-105 transition-transform">
+                        Más info
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contacto" class="py-20 bg-gradient-to-r from-primary/20 to-secondary/20">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-3xl mx-auto section-hidden">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    ¿Tienes <span class="gradient-text">dudas?</span>
+                </h2>
+                <p class="text-xl text-gray-300 mb-8">
+                    Reserva una llamada de 30 minutos con un miembro del equipo de FlowGen y descubre cómo nuestras estrategias pueden ayudarte a generar leads de alta calidad y cerrar más ventas.
+                </p>
+                <div class="glass-effect rounded-2xl p-8 mb-8">
+                    <div class="grid md:grid-cols-3 gap-8 text-center">
+                        <div>
+                            <i class="fas fa-calendar-alt text-3xl text-accent mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Análisis Gratuito</h3>
+                            <p class="text-gray-300">Evaluamos tu situación actual</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-bullseye text-3xl text-accent mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Estrategia Personalizada</h3>
+                            <p class="text-gray-300">Plan específico para tu negocio</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-rocket text-3xl text-accent mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Implementación</h3>
+                            <p class="text-gray-300">Comenzamos a generar resultados</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="bg-gradient-to-r from-primary to-secondary px-8 py-4 rounded-full text-lg font-bold hover:scale-105 transition-transform animate-glow">
+                    Reservar llamada gratuita
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/40 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-rocket text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text">FlowGen</span>
+                    </div>
+                    <p class="text-gray-400">Outbound que garantiza resultados para tu negocio.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Servicios</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-accent transition-colors">Cold Email</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">LinkedIn Outreach</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Growth Hacking</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Academy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Empresa</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-accent transition-colors">Sobre nosotros</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Casos de éxito</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Síguenos</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center hover:bg-primary/40 transition-colors">
+                            <i class="fab fa-linkedin text-primary"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center hover:bg-primary/40 transition-colors">
+                            <i class="fab fa-instagram text-primary"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 FlowGen. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('overlay');
+    const links = document.querySelectorAll('.mobile-link');
+
+    function openMenu() {
+      menuBtn.classList.add('active');
+      mobileMenu.classList.add('menu-open');
+      overlay.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      menuBtn.classList.remove('active');
+      mobileMenu.classList.remove('menu-open');
+      overlay.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    menuBtn.addEventListener('click', () => {
+      if (mobileMenu.classList.contains('menu-open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    overlay.addEventListener('click', closeMenu);
+
+    links.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+    
+    // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('section-visible');
+                    entry.target.classList.remove('section-hidden');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with section-hidden class
+        document.querySelectorAll('.section-hidden').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 40);
+        }
+
+        // Trigger counter animation when visible
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-count'));
+                    if (target) {
+                        animateCounter(entry.target, target);
+                        counterObserver.unobserve(entry.target);
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-count]').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+            
+            document.querySelectorAll('.animate-float').forEach((element, index) => {
+                element.style.transform = `translateY(${rate * (index + 1) * 0.1}px)`;
+            });
+        });
+
+        
+ 
+
+        // Add custom ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Scroll progress indicator
+        const progressBar = document.createElement('div');
+        progressBar.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #f59e0b);
+            z-index: 9999;
+            transition: width 0.3s ease;
+        `;
+        document.body.appendChild(progressBar);
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            progressBar.style.width = scrollPercent + '%';
+        });
+
+      
+        // Modal functions
+        window.closeModal = function() {
+            const modal = document.getElementById('contact-modal');
+            if (modal) {
+                modal.remove();
+            }
+        };
+
+        window.openContactModal = function() {
+            closeModal(); // Close any existing modal
+            createContactForm();
+            
+            // Handle form submission
+            document.getElementById('contact-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simulate form submission
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Enviando...';
+                submitBtn.disabled = true;
+                
+                setTimeout(() => {
+                    submitBtn.textContent = '✓ ¡Mensaje enviado!';
+                    submitBtn.classList.add('bg-green-600');
+                    
+                    setTimeout(() => {
+                        closeModal();
+                        showSuccessMessage();
+                    }, 1500);
+                }, 2000);
+            });
+        };
+
+        // Success message
+        function showSuccessMessage() {
+            const successDiv = document.createElement('div');
+            successDiv.innerHTML = `
+                <div class="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span>¡Gracias! Nos pondremos en contacto contigo pronto.</span>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 5000);
+        }
+
+        // Attach modal to CTA buttons
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Conseguir más clientes') || 
+                button.textContent.includes('Reservar llamada')) {
+                button.addEventListener('click', openContactModal);
+            }
+        });
+
+    
+    </script>
+</body>
+</html>
